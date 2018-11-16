@@ -3,7 +3,7 @@
     public class User
     {
         /*
-         CREATE TABLE [dbo].[User]
+         CREATE TABLE [dbo].[UserId]
 (
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [Username] NVARCHAR(50) NULL, 
@@ -14,13 +14,13 @@
         public int Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public bool status { get; set; }
+        public int status { get; set; }
 
         public User()
         {
         }
 
-        public User(int id, string username, string password, bool status)
+        public User(int id, string username, string password, int status)
         {
             Id = id;
             Username = username;

@@ -54,7 +54,15 @@ namespace HoursRegisteringRestService
                 ResponseFormat = WebMessageFormat.Json,
                 UriTemplate = "place")
         ]
-        string AddPlace(string place);
+        string PostPlace(Place place);
+
+        [OperationContract]
+        [WebInvoke(
+                Method = "GET",
+                ResponseFormat = WebMessageFormat.Json,
+                UriTemplate = "place")
+        ]
+        List<Place> GetPlaces();
 
         [OperationContract]
         [WebInvoke(
