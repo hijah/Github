@@ -19,7 +19,7 @@ namespace HoursRegisteringRestService
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                String sql = @"SELECT * FROM dbo.Work INNER JOIN dbo.Place ON Place.Id = FK_Place";
+                String sql = @"SELECT * FROM dbo.Work INNER JOIN dbo.User INNER JOIN dbo.Place ON Place.Id=FK_Place, User.Id=FK_User";
                 SqlCommand command = new SqlCommand(sql, conn);
                 SqlDataReader reader = command.ExecuteReader();
 
