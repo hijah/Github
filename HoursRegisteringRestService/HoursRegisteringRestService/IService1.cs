@@ -8,7 +8,6 @@ using System.Text;
 
 namespace HoursRegisteringRestService
 {
-    // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IService1" in both code and config file together.
     [ServiceContract]
     public interface IService1
     {
@@ -37,7 +36,7 @@ namespace HoursRegisteringRestService
                 ResponseFormat = WebMessageFormat.Json,
                 UriTemplate = "day")
         ]
-        String PostWork(Work work); //TODO: needs parameters.
+        string PostWork(Work work); //TODO: needs parameters.
 
         [OperationContract]
         [WebInvoke(
@@ -46,7 +45,52 @@ namespace HoursRegisteringRestService
                 ResponseFormat = WebMessageFormat.Json,
                 UriTemplate = "day")
         ]
-        String PutWork(); //TODO: needs parameters.
+        String PutWork(Work work); //TODO: needs parameters.
 
+        [OperationContract]
+        [WebInvoke(
+                Method = "POST",
+                RequestFormat = WebMessageFormat.Json,
+                ResponseFormat = WebMessageFormat.Json,
+                UriTemplate = "place")
+        ]
+        string AddPlace(string place);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "GET",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "user/{username}")
+        ]
+        User GetSpecificUser(string username);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "GET",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "user")
+        ]
+        List<User> GetUsers();
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "DELETE",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "user/{user}")
+        ]
+        string DeleteUser(string user);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "user?user={user}")
+        ]
+        string PostUser(User user);
+        
     }
 }

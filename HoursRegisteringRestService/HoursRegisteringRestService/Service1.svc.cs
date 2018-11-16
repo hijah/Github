@@ -13,15 +13,13 @@ namespace HoursRegisteringRestService
     {
         private static string connectionString = "Server=tcp:eventservertobias.database.windows.net,1433;Initial Catalog=EventMakerDB;Persist Security Info=False;User ID=TobyAdmin;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
-        #region GetListWork
-
         public List<Work> GetListWork()
         {
             List<Work> workList = new List<Work>();
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                String sql = @"SELECT * FROM dbo.Work";
+                String sql = @"SELECT * FROM dbo.Work INNER JOIN dbo.Place ON Place.Id = FK_Place";
                 SqlCommand command = new SqlCommand(sql, conn);
                 SqlDataReader reader = command.ExecuteReader();
 
@@ -47,17 +45,13 @@ namespace HoursRegisteringRestService
             return workList;
         }
 
-        #endregion
-
-        #region GetSpecificWork
-
         public List<Work> GetWork(DateTime date, string name)
         {
             List<Work> workList = new List<Work>();
             using (SqlConnection conn = new SqlConnection())
             {
                 conn.Open();
-                String sql = @"SELECT * FROM dbo.Work WHERE date = @date AND name = @name";
+                String sql = @"SELECT * FROM dbo.Work WHERE date = @date, name = @name";
                 SqlCommand command = new SqlCommand(sql, conn);
                 command.Parameters.AddWithValue("@date", date);
                 command.Parameters.AddWithValue("@name", name);
@@ -85,26 +79,22 @@ namespace HoursRegisteringRestService
             return workList;
         }
 
-        #endregion
-
-        #region PostWork
-
         public string PostWork(Work work)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                String sql = @"INSERT INTO dbo.Work()"; //TODO: Fix after made logic to fix place and user.
+                String sql = @"INSERT INTO dbo.Work(Date, Workhour, Drivehour, Overtime, Timeoff, User, Place, InternJobNR, ExternJobNR) VALUES (@Date, @WorkHour, @DriveHour, @Overtime, @TimeOff, @User, @Place, @InterJobNr, @ExternJobNr)"; //TODO: Fix after made logic to fix place and user.
                 SqlCommand command = new SqlCommand(sql, conn);
-                command.Parameters.AddWithValue("@date", work.Date);
-                command.Parameters.AddWithValue("@workHour", work.WorkHour);
-                command.Parameters.AddWithValue("@driveHour", work.DriveHour);
-                command.Parameters.AddWithValue("@overTime", work.OverTime);
-                command.Parameters.AddWithValue("@timeOff", work.TimeOff);
-                command.Parameters.AddWithValue("@user", work.User); //TODO: make a list it can go from.
-                command.Parameters.AddWithValue("@place", work.Place); //TODO: make a list it can go from.
-                command.Parameters.AddWithValue("@internJobNr", work.InternJobNr);
-                command.Parameters.AddWithValue("@externJobNr", work.ExternJobNr);
+                command.Parameters.AddWithValue("@Date", work.Date);
+                command.Parameters.AddWithValue("@WorkHour", work.WorkHour);
+                command.Parameters.AddWithValue("@DriveHour", work.DriveHour);
+                command.Parameters.AddWithValue("@Overtime", work.OverTime);
+                command.Parameters.AddWithValue("@TimeOff", work.TimeOff);
+                command.Parameters.AddWithValue("@User", work.User); //TODO: make a list it can go from.
+                command.Parameters.AddWithValue("@Place", work.Place); //TODO: make a list it can go from.
+                command.Parameters.AddWithValue("@InternJobNr", work.InternJobNr);
+                command.Parameters.AddWithValue("@ExternJobNr", work.ExternJobNr);
 
                 command.ExecuteNonQuery();
                 conn.Close();
@@ -112,9 +102,48 @@ namespace HoursRegisteringRestService
             }
         }
 
-        #endregion
+        public string PutWork(Work work)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                String sql = @"UPDATE dbo.Work SET Workhour = @WorkHour, Drivehour = @DriveHour, Overtime = @Overtime, Timeoff = @TimeOff, Place = @Place, InternJobNR = @InterJobNr, ExternJobNR = @ExternJobNr WHERE id = @id";
+                SqlCommand command = new SqlCommand(sql, conn);
+                command.Parameters.AddWithValue("@WorkHour", work.WorkHour);
+                command.Parameters.AddWithValue("@DriveHour", work.DriveHour);
+                command.Parameters.AddWithValue("@Overtime", work.OverTime);
+                command.Parameters.AddWithValue("@TimeOff", work.TimeOff);
+                command.Parameters.AddWithValue("@Place", "Fix");//TODO: Liste ting skal være done
+                command.Parameters.AddWithValue("@InternJobNr", work.InternJobNr);
+                command.Parameters.AddWithValue("@ExternJobNr", work.ExternJobNr);
 
-        public string PutWork()
+                command.ExecuteNonQuery();
+                conn.Close();
+                return "Arbejdet er blevet opdateret";
+            }
+        }
+
+        public string AddPlace(string place)
+        {
+            throw new NotImplementedException();
+        }
+
+        public User GetSpecificUser(string username)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<User> GetUsers()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string DeleteUser(string user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string PostUser(User user)
         {
             throw new NotImplementedException();
         }
