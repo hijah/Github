@@ -15,7 +15,7 @@ namespace HoursRegisteringRestService
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                String sql = @"SELECT * FROM Work INNER JOIN Place ON Place.Id=FK_Place"; //TODO: implement User.
+                String sql = @"SELECT * FROM Work INNER JOIN Place ON Place.Id=FK_Place INNER JOIN AppUser ON AppUser.Id=FK_User";
                 SqlCommand command = new SqlCommand(sql, conn);
                 SqlDataReader reader = command.ExecuteReader();
 
@@ -23,6 +23,7 @@ namespace HoursRegisteringRestService
                 {
                     Work work = new Work();
                     Place place = new Place();
+                    User user = new User();
 
                     work.Id = reader.GetInt32(0);
                     work.Date = reader.GetDateTime(1);
@@ -37,7 +38,12 @@ namespace HoursRegisteringRestService
                     place.Id = reader.GetInt32(10);
                     place.PlaceName = reader.GetString(11);
                     place.Activated = reader.GetBoolean(12);
+                    user.Id = reader.GetInt32(13);
+                    user.Username = reader.GetString(14);
+                    user.Password = reader.GetString(15);
+                    user.status = reader.GetInt32(16);
 
+                    work.User = user;
                     work.Place = place;
 
                     workList.Add(work);
@@ -53,7 +59,7 @@ namespace HoursRegisteringRestService
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                String sql = @"SELECT * FROM dbo.Work WHERE date = @date, name = @name"; //TODO: InnerJoin
+                String sql = @"SELECT * FROM dbo.Work WHERE date = @date, name = @name INNER JOIN Place ON Place.Id=FK_Place INNER JOIN AppUser ON AppUser.Id=FK_User"; //TODO: InnerJoin
                 SqlCommand command = new SqlCommand(sql, conn);
                 command.Parameters.AddWithValue("@date", date);
                 command.Parameters.AddWithValue("@name", name);
@@ -62,6 +68,8 @@ namespace HoursRegisteringRestService
                 while (reader.Read())
                 {
                     Work work = new Work();
+                    Place place = new Place();
+                    User user = new User();
 
                     work.Id = reader.GetInt32(0);
                     work.Date = reader.GetDateTime(1);
@@ -69,10 +77,20 @@ namespace HoursRegisteringRestService
                     work.DriveHour = reader.GetFloat(3);
                     work.OverTime = reader.GetFloat(4);
                     work.TimeOff = reader.GetFloat(5);
-                    work.UserId = reader.GetInt32(6); //TODO: make a list it can go from.
-                    work.PlaceId = reader.GetInt32(7); //TODO: make a list it can go from.
+                    //work.UserId = reader.GetInt32(6); //TODO: make a list it can go from.
+                    //work.PlaceId = reader.GetInt32(7); //TODO: make a list it can go from.
                     work.InternJobNr = reader.GetString(8);
                     work.ExternJobNr = reader.GetString(9);
+                    place.Id = reader.GetInt32(10);
+                    place.PlaceName = reader.GetString(11);
+                    place.Activated = reader.GetBoolean(12);
+                    user.Id = reader.GetInt32(13);
+                    user.Username = reader.GetString(14);
+                    user.Password = reader.GetString(15);
+                    user.status = reader.GetInt32(16);
+
+                    work.User = user;
+                    work.Place = place;
 
                     workList.Add(work);
                 }
@@ -124,6 +142,21 @@ namespace HoursRegisteringRestService
                 return "Arbejdet er blevet opdateret";
             }
         }
+
+        public string DeleteWork(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"DELETE FROM Work WHERE Id = @Id";
+                SqlCommand command = new SqlCommand(sql, conn);
+                command.Parameters.AddWithValue("@Id", id);
+
+                command.ExecuteNonQuery();
+                conn.Close();
+                return "Det udvalgte arbejde er blevet slettet";
+            }
+        }
+
         #endregion
 
         #region PlaceId
@@ -168,12 +201,63 @@ namespace HoursRegisteringRestService
 
             return placeList;
         }
+
+        public string PutPlace(Place place)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string sql = @"UDATE Place SET Name = @Name, Activated = @Activated WHERE Id = @Id";
+                SqlCommand command = new SqlCommand(sql, conn);
+                command.Parameters.AddWithValue("@Id", place.Id);
+                command.Parameters.AddWithValue("@Name", place.PlaceName);
+                command.Parameters.AddWithValue("@Activated", place.Activated);
+
+                command.ExecuteNonQuery();
+                conn.Close();
+                return "Stedet med navnet " + place.PlaceName + " er blevet opdateret";
+            }
+        }
+
+        public string DeletePlace(int placeId)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string sql = @"DELETE FROM Place WHERE Id = @Id";
+                SqlCommand command = new SqlCommand(sql, conn);
+                command.Parameters.AddWithValue("@Id", placeId);
+
+                command.ExecuteNonQuery();
+                conn.Close();
+                return "Det valgte sted er blevet slettet";
+            }
+        }
+
         #endregion
 
         #region UserId
         public User GetSpecificUser(string username)
         {
-            throw new NotImplementedException();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                User user = new User();
+                conn.Open();
+                string sql = @"SELECT * FROM AppUser Where Username = @UserName";
+                SqlCommand command = new SqlCommand(sql, conn);
+                command.Parameters.AddWithValue("@UserName", username);
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    user.Id = reader.GetInt32(0);
+                    user.Username = reader.GetString(1);
+                    user.Password = reader.GetString(2);
+                    user.status = reader.GetInt32(3);
+                }
+                conn.Close();
+                return user;
+            }
         }
 
         public List<User> GetUsers()
@@ -203,9 +287,19 @@ namespace HoursRegisteringRestService
             return userList;
         }
 
-        public string DeleteUser(string user)
+        public string DeleteUser(int id)
         {
-            throw new NotImplementedException();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string sql = @"DELETE FROM AppUser WHERE Id = @Id";
+                SqlCommand command = new SqlCommand(sql, conn);
+                command.Parameters.AddWithValue("@Id", id);
+
+                command.ExecuteNonQuery();
+                conn.Close();
+                return "Brugeren er blevet slettet";
+            }
         }
 
         public string PostUser(User user)

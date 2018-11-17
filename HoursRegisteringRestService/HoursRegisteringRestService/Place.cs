@@ -17,6 +17,8 @@
             Activated = activated;
         }
 
+
+
         public override string ToString()
         {
             return $"{nameof(Id)}: {Id}, {nameof(PlaceName)}: {PlaceName}, {nameof(Activated)}: {Activated}";

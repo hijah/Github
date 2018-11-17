@@ -12,6 +12,8 @@ namespace HoursRegisteringRestService
     public interface IService1
     {
 
+        #region Work
+
         [OperationContract]
         [WebInvoke(
             Method = "GET",
@@ -23,46 +25,81 @@ namespace HoursRegisteringRestService
         [OperationContract]
         [WebInvoke(
             Method = "GET",
-                RequestFormat = WebMessageFormat.Json,
-                ResponseFormat = WebMessageFormat.Json,
-                UriTemplate = "day/{date}/{name}")
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "day/{date}/{name}")
         ]
         List<Work> GetWork(DateTime date, string name);
 
         [OperationContract]
         [WebInvoke(
-                Method = "POST",
-                RequestFormat = WebMessageFormat.Json,
-                ResponseFormat = WebMessageFormat.Json,
-                UriTemplate = "day")
+            Method = "POST",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "day")
         ]
-        string PostWork(Work work); //TODO: needs parameters.
+        string PostWork(Work work);
 
         [OperationContract]
         [WebInvoke(
-                Method = "PUT",
-                RequestFormat = WebMessageFormat.Json,
-                ResponseFormat = WebMessageFormat.Json,
-                UriTemplate = "day")
+            Method = "PUT",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "day")
         ]
-        String PutWork(Work work); //TODO: needs parameters.
+        string PutWork(Work work);
 
         [OperationContract]
         [WebInvoke(
-                Method = "POST",
-                RequestFormat = WebMessageFormat.Json,
-                ResponseFormat = WebMessageFormat.Json,
-                UriTemplate = "place")
+            Method = "DELETE",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "day")
+        ]
+        string DeleteWork(int id);
+
+            #endregion
+
+        #region Place
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "place")
         ]
         string PostPlace(Place place);
 
         [OperationContract]
         [WebInvoke(
-                Method = "GET",
-                ResponseFormat = WebMessageFormat.Json,
-                UriTemplate = "place")
+            Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "place")
         ]
         List<Place> GetPlaces();
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "PUT",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            UriTemplate = "place")
+        ]
+        string PutPlace(Place place);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "DELETE",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "place")
+        ]
+        string DeletePlace(int placeId);
+
+            #endregion
+
+        #region User
 
         [OperationContract]
         [WebInvoke(
@@ -89,7 +126,7 @@ namespace HoursRegisteringRestService
             ResponseFormat = WebMessageFormat.Json,
             UriTemplate = "user/{user}")
         ]
-        string DeleteUser(string user);
+        string DeleteUser(int id);
 
         [OperationContract]
         [WebInvoke(
@@ -99,6 +136,8 @@ namespace HoursRegisteringRestService
             UriTemplate = "user?user={user}")
         ]
         string PostUser(User user);
+
+        #endregion
         
     }
 }
