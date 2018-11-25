@@ -1,0 +1,7 @@
+C:\Users\jacob\Desktop\Github\HoursRegisteringRestService\HoursRegisteringRestService\bin\HoursRegisteringRestService.dll.config
+C:\Users\jacob\Desktop\Github\HoursRegisteringRestService\HoursRegisteringRestService\bin\HoursRegisteringRestService.dll
+C:\Users\jacob\Desktop\Github\HoursRegisteringRestService\HoursRegisteringRestService\bin\HoursRegisteringRestService.pdb
+C:\Users\jacob\Desktop\Github\HoursRegisteringRestService\HoursRegisteringRestService\obj\Release\HoursRegisteringRestService.csprojAssemblyReference.cache
+C:\Users\jacob\Desktop\Github\HoursRegisteringRestService\HoursRegisteringRestService\obj\Release\HoursRegisteringRestService.csproj.CoreCompileInputs.cache
+C:\Users\jacob\Desktop\Github\HoursRegisteringRestService\HoursRegisteringRestService\obj\Release\HoursRegisteringRestService.dll
+C:\Users\jacob\Desktop\Github\HoursRegisteringRestService\HoursRegisteringRestService\obj\Release\HoursRegisteringRestService.pdb

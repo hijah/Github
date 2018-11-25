@@ -32,26 +32,13 @@ CREATE TABLE [dbo].[Work]
         public int UserId { get; set; }
         public Place Place { get; set; }
         public User User { get; set; }
+        public Double FritValgsKonto { get; set; }
 
         public Work()
         {
         }
 
-        public Work(int id, DateTime date, double workHour, double driveHour, double overTime, double timeOff, string internJobNr, string externJobNr, int placeId, int userId)
-        {
-            Id = id;
-            Date = date;
-            WorkHour = workHour;
-            DriveHour = driveHour;
-            OverTime = overTime;
-            TimeOff = timeOff;
-            InternJobNr = internJobNr;
-            ExternJobNr = externJobNr;
-            PlaceId = placeId;
-            UserId = userId;
-        }
-
-        public Work(int id, DateTime date, double workHour, double driveHour, double overTime, double timeOff, string internJobNr, string externJobNr, int placeId, int userId, Place place, User user)
+        public Work(int id, DateTime date, double workHour, double driveHour, double overTime, double timeOff, string internJobNr, string externJobNr, int placeId, int userId, Place place, User user, double fritValgsKonto)
         {
             Id = id;
             Date = date;
@@ -65,25 +52,12 @@ CREATE TABLE [dbo].[Work]
             UserId = userId;
             Place = place;
             User = user;
-        }
-
-        public Work(int id, DateTime date, double workHour, double driveHour, double overTime, double timeOff, string internJobNr, string externJobNr, Place place, User user)
-        {
-            Id = id;
-            Date = date;
-            WorkHour = workHour;
-            DriveHour = driveHour;
-            OverTime = overTime;
-            TimeOff = timeOff;
-            InternJobNr = internJobNr;
-            ExternJobNr = externJobNr;
-            Place = place;
-            User = user;
+            FritValgsKonto = fritValgsKonto;
         }
 
         public override string ToString()
         {
-            return $"{nameof(Id)}: {Id}, {nameof(Date)}: {Date}, {nameof(WorkHour)}: {WorkHour}, {nameof(DriveHour)}: {DriveHour}, {nameof(OverTime)}: {OverTime}, {nameof(TimeOff)}: {TimeOff}, {nameof(InternJobNr)}: {InternJobNr}, {nameof(ExternJobNr)}: {ExternJobNr}, {nameof(PlaceId)}: {PlaceId}, {nameof(UserId)}: {UserId}";
+            return $"{nameof(Id)}: {Id}, {nameof(Date)}: {Date}, {nameof(WorkHour)}: {WorkHour}, {nameof(DriveHour)}: {DriveHour}, {nameof(OverTime)}: {OverTime}, {nameof(TimeOff)}: {TimeOff}, {nameof(InternJobNr)}: {InternJobNr}, {nameof(ExternJobNr)}: {ExternJobNr}, {nameof(PlaceId)}: {PlaceId}, {nameof(UserId)}: {UserId}, {nameof(Place)}: {Place}, {nameof(User)}: {User}, {nameof(FritValgsKonto)}: {FritValgsKonto}";
         }
     }
 }

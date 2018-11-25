@@ -7,9 +7,9 @@ namespace HoursRegisteringRestService
     public class Service1 : IService1
     {
         private static string connectionString = "Server=tcp:eventservertobias.database.windows.net,1433;Initial Catalog=EventMakerDB;Persist Security Info=False;User ID=TobiAdmin;Password=sadaWwd222!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-
+        
         #region Work
-        public List<Work> GetListWork()
+        public List<Work> GetAllWorkList()
         {
             List<Work> workList = new List<Work>();
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -35,13 +35,14 @@ namespace HoursRegisteringRestService
                     //work.PlaceId = reader.GetInt32(7); //TODO: fix me
                     work.InternJobNr = reader.GetString(8);
                     work.ExternJobNr = reader.GetString(9);
-                    place.Id = reader.GetInt32(10);
-                    place.PlaceName = reader.GetString(11);
-                    place.Activated = reader.GetBoolean(12);
-                    user.Id = reader.GetInt32(13);
-                    user.Username = reader.GetString(14);
-                    user.Password = reader.GetString(15);
-                    user.status = reader.GetInt32(16);
+                    work.FritValgsKonto = (double) reader.GetDecimal(10);
+                    place.Id = reader.GetInt32(11);
+                    place.PlaceName = reader.GetString(12);
+                    place.Activated = reader.GetBoolean(13);
+                    user.Id = reader.GetInt32(14);
+                    user.Username = reader.GetString(15);
+                    user.Email = reader.GetString(16);
+                    user.status = reader.GetInt32(17);
 
                     work.User = user;
                     work.Place = place;
@@ -53,15 +54,15 @@ namespace HoursRegisteringRestService
             return workList;
         }
 
-        public List<Work> GetWork(DateTime date, string name)
+        public List<Work> GetWorkForApp(string date, string name)
         {
             List<Work> workList = new List<Work>();
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                String sql = @"SELECT * FROM dbo.Work WHERE date = @date, name = @name INNER JOIN Place ON Place.Id=FK_Place INNER JOIN AppUser ON AppUser.Id=FK_User"; //TODO: InnerJoin
+                String sql = @"SELECT * FROM dbo.Work WHERE date = @date, name = @name INNER JOIN Place ON Place.Id=FK_Place INNER JOIN AppUser ON AppUser.Id=FK_User";
                 SqlCommand command = new SqlCommand(sql, conn);
-                command.Parameters.AddWithValue("@date", date);
+                command.Parameters.AddWithValue("@date", DateTime.Parse(date));
                 command.Parameters.AddWithValue("@name", name);
                 SqlDataReader reader = command.ExecuteReader();
 
@@ -77,17 +78,18 @@ namespace HoursRegisteringRestService
                     work.DriveHour = reader.GetFloat(3);
                     work.OverTime = reader.GetFloat(4);
                     work.TimeOff = reader.GetFloat(5);
-                    //work.UserId = reader.GetInt32(6); //TODO: make a list it can go from.
-                    //work.PlaceId = reader.GetInt32(7); //TODO: make a list it can go from.
+                    //work.UserId = reader.GetInt32(6); 
+                    //work.PlaceId = reader.GetInt32(7); 
                     work.InternJobNr = reader.GetString(8);
                     work.ExternJobNr = reader.GetString(9);
-                    place.Id = reader.GetInt32(10);
-                    place.PlaceName = reader.GetString(11);
-                    place.Activated = reader.GetBoolean(12);
-                    user.Id = reader.GetInt32(13);
-                    user.Username = reader.GetString(14);
-                    user.Password = reader.GetString(15);
-                    user.status = reader.GetInt32(16);
+                    work.FritValgsKonto = (double) reader.GetDecimal(10);
+                    place.Id = reader.GetInt32(11);
+                    place.PlaceName = reader.GetString(12);
+                    place.Activated = reader.GetBoolean(13);
+                    user.Id = reader.GetInt32(14);
+                    user.Username = reader.GetString(15);
+                    user.Email = reader.GetString(16);
+                    user.status = reader.GetInt32(17);
 
                     work.User = user;
                     work.Place = place;
@@ -104,17 +106,21 @@ namespace HoursRegisteringRestService
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                String sql = @"INSERT INTO dbo.Work(Date, Workhour, Drivehour, Overtime, Timeoff, UserId, PlaceId, InternJobNR, ExternJobNR) VALUES (@Date, @WorkHour, @DriveHour, @Overtime, @TimeOff, @UserId, @PlaceId, @InterJobNr, @ExternJobNr)"; //TODO: Fix after made logic to fix place and user.
+                String sql = @"INSERT INTO dbo.Work(Date, Workhour, Drivehour, Overtime, Timeoff, UserId, PlaceId, InternJobNR, ExternJobNR, FritValgsKonto) VALUES (@Date, @WorkHour, @DriveHour, @Overtime, @TimeOff, @UserId, @PlaceId, @InterJobNr, @ExternJobNr, @FritValgsKonto)";
                 SqlCommand command = new SqlCommand(sql, conn);
                 command.Parameters.AddWithValue("@Date", work.Date);
                 command.Parameters.AddWithValue("@WorkHour", work.WorkHour);
                 command.Parameters.AddWithValue("@DriveHour", work.DriveHour);
                 command.Parameters.AddWithValue("@Overtime", work.OverTime);
-                command.Parameters.AddWithValue("@TimeOff", work.TimeOff);
+
+                double timeOffCalc = work.TimeOff + work.DriveHour + work.OverTime;
+                
+                command.Parameters.AddWithValue("@TimeOff", timeOffCalc);
                 command.Parameters.AddWithValue("@UserId", work.UserId);
                 command.Parameters.AddWithValue("@PlaceId", work.PlaceId);
                 command.Parameters.AddWithValue("@InternJobNr", work.InternJobNr);
                 command.Parameters.AddWithValue("@ExternJobNr", work.ExternJobNr);
+                command.Parameters.AddWithValue("@FritValgsKonto", work.FritValgsKonto);
 
                 command.ExecuteNonQuery();
                 conn.Close();
@@ -127,15 +133,16 @@ namespace HoursRegisteringRestService
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                String sql = @"UPDATE dbo.Work SET Workhour = @WorkHour, Drivehour = @DriveHour, Overtime = @Overtime, Timeoff = @TimeOff, PlaceId = @PlaceId, InternJobNR = @InterJobNr, ExternJobNR = @ExternJobNr WHERE id = @id";
+                String sql = @"UPDATE dbo.Work SET Workhour = @WorkHour, Drivehour = @DriveHour, Overtime = @Overtime, Timeoff = @TimeOff, PlaceId = @PlaceId, InternJobNR = @InterJobNr, ExternJobNR = @ExternJobNr, FritValgsKonto = @FritValgsKonto WHERE id = @id";
                 SqlCommand command = new SqlCommand(sql, conn);
                 command.Parameters.AddWithValue("@WorkHour", work.WorkHour);
                 command.Parameters.AddWithValue("@DriveHour", work.DriveHour);
                 command.Parameters.AddWithValue("@Overtime", work.OverTime);
                 command.Parameters.AddWithValue("@TimeOff", work.TimeOff);
-                command.Parameters.AddWithValue("@PlaceId", "Fix");//TODO: Liste ting skal være done
+                command.Parameters.AddWithValue("@PlaceId", "Fix");
                 command.Parameters.AddWithValue("@InternJobNr", work.InternJobNr);
                 command.Parameters.AddWithValue("@ExternJobNr", work.ExternJobNr);
+                command.Parameters.AddWithValue("@FritValgsKonto", work.FritValgsKonto);
 
                 command.ExecuteNonQuery();
                 conn.Close();
@@ -252,7 +259,7 @@ namespace HoursRegisteringRestService
                 {
                     user.Id = reader.GetInt32(0);
                     user.Username = reader.GetString(1);
-                    user.Password = reader.GetString(2);
+                    user.Email = reader.GetString(2);
                     user.status = reader.GetInt32(3);
                 }
                 conn.Close();
@@ -276,7 +283,7 @@ namespace HoursRegisteringRestService
 
                     user.Id = reader.GetInt32(0);
                     user.Username = reader.GetString(1);
-                    user.Password = reader.GetString(2);
+                    user.Email = reader.GetString(2);
                     user.status = reader.GetInt32(3);
 
                     userList.Add(user);
@@ -307,10 +314,10 @@ namespace HoursRegisteringRestService
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                String sql = @"INSERT INTO AppUser(Username, Password, Status) VALUES (@Username, @Password, @Status)";
+                String sql = @"INSERT INTO AppUser(Username, Email, Status) VALUES (@Username, @Email, @Status)";
                 SqlCommand command = new SqlCommand(sql, conn);
                 command.Parameters.AddWithValue("@Username", user.Username);
-                command.Parameters.AddWithValue("@Password", user.Password);
+                command.Parameters.AddWithValue("@Email", user.Email);
                 command.Parameters.AddWithValue("@Status", user.status);
 
                 command.ExecuteNonQuery();

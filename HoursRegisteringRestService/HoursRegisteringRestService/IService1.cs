@@ -20,16 +20,16 @@ namespace HoursRegisteringRestService
             ResponseFormat = WebMessageFormat.Json,
             UriTemplate = "days")
         ]
-        List<Work> GetListWork();
+        List<Work> GetAllWorkList();
 
         [OperationContract]
         [WebInvoke(
             Method = "GET",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
-            UriTemplate = "day/{date}/{name}")
+            UriTemplate = "days/{date}/{name}")
         ]
-        List<Work> GetWork(DateTime date, string name);
+        List<Work> GetWorkForApp(string date, string name);
 
         [OperationContract]
         [WebInvoke(
@@ -124,7 +124,7 @@ namespace HoursRegisteringRestService
             Method = "DELETE",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
-            UriTemplate = "user/{user}")
+            UriTemplate = "user")
         ]
         string DeleteUser(int id);
 
@@ -133,7 +133,7 @@ namespace HoursRegisteringRestService
             Method = "POST",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
-            UriTemplate = "user?user={user}")
+            UriTemplate = "user")
         ]
         string PostUser(User user);
 
